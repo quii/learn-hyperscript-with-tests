@@ -23,15 +23,13 @@ describe('hyperscript', async () => {
 
         const firstButtonSelector = '#firstButton'
 
-        function getButtonClass() {
-            return page.$eval(firstButtonSelector, el => el.className);
-        }
+        const getFirstButtonClass = () => page.$eval(firstButtonSelector, el => el.className);
 
-        assert.equal(await getButtonClass(), "", "no class yet")
+        assert.equal(await getFirstButtonClass(), "", "no class yet")
 
         const element = await page.waitForSelector(firstButtonSelector)
         await element.click()
 
-        assert.equal(await getButtonClass(), "red", "now has class after clicking")
+        assert.equal(await getFirstButtonClass(), "red", "now has class after clicking")
     });
 })
