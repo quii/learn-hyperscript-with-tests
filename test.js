@@ -7,7 +7,7 @@ describe('hyperscript', async () => {
     let browser, page;
 
     before(async () => {
-        browser = await puppeteer.launch();
+        browser = await puppeteer.launch({headless: false});
         page = await browser.newPage();
         await page.goto('http://localhost:8080/basics.html');
     });
@@ -60,6 +60,14 @@ describe('hyperscript', async () => {
             await element.click()
             await element.click()
             assert.equal(await getClass(), "red", "now has class after clicking")
+        })
+
+        it('state put into something else', async () => {
+            const element = await page.waitForSelector('#otherTarget')
+            await element.click()
+            await element.click()
+            await element.click()
+            assert.equal(await page.$eval('#output', el => el.innerText), "3")
         })
 
     });
