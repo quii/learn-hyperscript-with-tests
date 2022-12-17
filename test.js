@@ -22,7 +22,7 @@ describe('hyperscript', async () => {
 
             const getClass = () => page.$eval(selector, el => el.className);
 
-            assert.equal(await getClass(), "", "no class yet")
+            assert.equal(await getClass(selector), "", "no class yet")
 
             const element = await page.waitForSelector(selector)
             await element.click()
@@ -40,6 +40,25 @@ describe('hyperscript', async () => {
             const element = await page.waitForSelector(selector)
             await element.click()
 
+            assert.equal(await getClass(), "red", "now has class after clicking")
+
+            await element.click()
+            assert.equal(await getClass(), "", "class toggled away")
+
+        })
+
+        it('state kept within the element', async () => {
+            const selector = '#state'
+
+            const getClass = () => page.$eval(selector, el => el.className);
+
+            assert.equal(await getClass(), "", "no class yet")
+
+            const element = await page.waitForSelector(selector)
+            await element.click()
+            assert.equal(await getClass(), "", "still no class yet")
+            await element.click()
+            await element.click()
             assert.equal(await getClass(), "red", "now has class after clicking")
         })
 
