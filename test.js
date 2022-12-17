@@ -4,32 +4,44 @@ import puppeteer from 'puppeteer';
 
 
 describe('hyperscript', async () => {
-    let browser;
+    let browser, page;
 
-    // i don't understand why this doesn't work
-    // before(async () => {
-    //     browser = await puppeteer.launch();
-    //     console.log('browser launched')
-    // });
+    before(async () => {
+        browser = await puppeteer.launch();
+        page = await browser.newPage();
+        await page.goto('http://localhost:8080/basics.html');
+    });
 
     after(async () => {
         browser.close();
     });
 
-    it('toggles css on stuff', async () => {
-        browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.goto('http://localhost:8080/basics.html');
+    describe('on click', async () => {
+        it('toggles a button css', async () => {
+            const selector = '#firstButton'
 
-        const firstButtonSelector = '#firstButton'
+            const getClass = () => page.$eval(selector, el => el.className);
 
-        const getFirstButtonClass = () => page.$eval(firstButtonSelector, el => el.className);
+            assert.equal(await getClass(), "", "no class yet")
 
-        assert.equal(await getFirstButtonClass(), "", "no class yet")
+            const element = await page.waitForSelector(selector)
+            await element.click()
 
-        const element = await page.waitForSelector(firstButtonSelector)
-        await element.click()
+            assert.equal(await getClass(), "red", "now has class after clicking")
+        })
 
-        assert.equal(await getFirstButtonClass(), "red", "now has class after clicking")
+        it('toggles another button css with a comment inside', async () => {
+            const selector = '#comments'
+
+            const getClass = () => page.$eval(selector, el => el.className);
+
+            assert.equal(await getClass(), "", "no class yet")
+
+            const element = await page.waitForSelector(selector)
+            await element.click()
+
+            assert.equal(await getClass(), "red", "now has class after clicking")
+        })
+
     });
 })
